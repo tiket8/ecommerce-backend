@@ -12,9 +12,20 @@ class CrearTablaProductos extends Migration
      * @return void
      */
     public function up()
-    {
-        //
-    }
+{
+    Schema::create('productos', function (Blueprint $table) {
+        $table->id();
+        $table->string('nombre');
+        $table->text('descripcion');
+        $table->decimal('precio', 8, 2);
+        $table->integer('cantidad');
+        $table->string('categoria');
+        $table->boolean('oferta')->default(false);
+        $table->string('foto');
+        $table->boolean('estado')->default(true);
+        $table->timestamps();
+    });
+}
 
     /**
      * Reverse the migrations.
