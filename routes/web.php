@@ -20,3 +20,19 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::resource('admin/pedidos', AdminPedidoController::class);
+});
+
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::resource('admin/productos', AdminProductoController::class);
+});
+
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::resource('admin/usuarios', AdminUsuarioController::class);
+});
+
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::get('admin/estadisticas', [AdminEstadisticasController::class, 'index'])->name('admin.estadisticas.index');
+});
