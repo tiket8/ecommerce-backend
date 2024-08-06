@@ -29,3 +29,24 @@ Route::middleware('auth:sanctum')->group(function () {
 
 // Ruta para obtener las ofertas
 Route::get('ofertas', [OfertaController::class, 'index']);
+
+//Rutas admin
+Route::middleware('auth:sanctum')->group(function () {
+    // Pedidos
+    Route::get('/admin/pedidos', [AdminController::class, 'getPedidos']);
+    Route::get('/admin/pedidos/{id}', [AdminController::class, 'showPedido']);
+    Route::put('/admin/pedidos/{id}', [AdminController::class, 'updatePedido']);
+
+    // Productos
+    Route::get('/admin/productos', [AdminController::class, 'getProductos']);
+    Route::post('/admin/productos', [AdminController::class, 'storeProducto']);
+    Route::put('/admin/productos/{id}', [AdminController::class, 'updateProducto']);
+    Route::delete('/admin/productos/{id}', [AdminController::class, 'destroyProducto']);
+
+    // Usuarios
+    Route::get('/admin/usuarios', [AdminController::class, 'getUsuarios']);
+    Route::delete('/admin/usuarios/{id}', [AdminController::class, 'destroyUsuario']);
+
+    // Estadísticas
+    Route::get('/admin/estadisticas', [AdminController::class, 'getEstadisticas']);
+});
