@@ -1,6 +1,12 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\AdminPedidoController;
+use App\Http\Controllers\AdminProductoController;
+use App\Http\Controllers\AdminUsuarioController;
+use App\Http\Controllers\AdminEstadisticasController;
+use App\Http\Controllers\AuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,16 +25,12 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/home', [HomeController::class, 'index'])->name('home');
 
+// Rutas protegidas para el administrador
 Route::middleware(['auth', 'rol:admin'])->group(function () {
     Route::resource('admin/pedidos', AdminPedidoController::class);
     Route::resource('admin/productos', AdminProductoController::class);
     Route::resource('admin/usuarios', AdminUsuarioController::class);
     Route::get('admin/estadisticas', [AdminEstadisticasController::class, 'index'])->name('admin.estadisticas.index');
 });
-
-
-Auth::routes();
-
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
