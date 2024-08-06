@@ -21,7 +21,7 @@ class CrearTablaProductos extends Migration
         $table->integer('cantidad');
         $table->string('categoria');
         $table->boolean('oferta')->default(false);
-        $table->string('foto');
+        $table->string('foto')->nullable();
         $table->boolean('estado')->default(true);
         $table->timestamps();
     });
