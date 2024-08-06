@@ -1,15 +1,29 @@
 <?php
 
+namespace App\Models;
+
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+
 class Usuario extends Authenticatable
 {
     use HasFactory, Notifiable;
 
     protected $fillable = [
-        'nombre', 'direccion', 'telefono', 'celular', 'email', 'password', 'rol', 'estado'
+        'nombre',
+        'direccion',
+        'telefono',
+        'celular',
+        'email',
+        'password',
+        'rol',
+        'estado'
     ];
 
     protected $hidden = [
-        'password', 'remember_token',
+        'password',
+        'remember_token',
     ];
 
     public function pedidos()
