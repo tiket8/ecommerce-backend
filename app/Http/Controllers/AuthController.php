@@ -26,12 +26,7 @@ class AuthController extends Controller
         $user = Auth::user();
         $token = $user->createToken('authToken')->plainTextToken;
 
-        return response()->json([
-            'token' => $token,
-            'user' => [
-                'rol' => $user->rol
-            ]
-        ]);
+        return response()->json(['token' => $token, 'usuario' => $user]);
     }
 
     public function register(Request $request)
@@ -45,7 +40,7 @@ class AuthController extends Controller
             'password' => 'required|string|min:8|confirmed',
         ]);
 
-        $user = Usuario::create([
+        $usuario = Usuario::create([
             'nombre' => $validatedData['nombre'],
             'direccion' => $validatedData['direccion'],
             'telefono' => $validatedData['telefono'],
@@ -56,9 +51,9 @@ class AuthController extends Controller
             'estado' => true,
         ]);
 
-        $token = $user->createToken('authToken')->plainTextToken;
+        $token = $usuario->createToken('authToken')->plainTextToken;
 
-        return response()->json(['token' => $token]);
+        return response()->json(['token' => $token, 'usuario' => $usuario]);
     }
 
     public function logout(Request $request)

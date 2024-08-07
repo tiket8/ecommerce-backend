@@ -34,3 +34,9 @@ Route::middleware(['auth', 'rol:admin'])->group(function () {
     Route::resource('admin/usuarios', AdminUsuarioController::class);
     Route::get('admin/estadisticas', [AdminEstadisticasController::class, 'index'])->name('admin.estadisticas.index');
 });
+
+Route::middleware(['auth:sanctum', 'rol:admin'])->group(function () {
+    Route::get('/productos', [AdminProductoController::class, 'index']);
+    Route::post('/productos', [AdminProductoController::class, 'store']);
+    Route::delete('/productos/{id}', [AdminProductoController::class, 'destroy']);
+});
