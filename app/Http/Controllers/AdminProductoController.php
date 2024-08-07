@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Producto;
+use Illuminate\Http\Request;
 
 class AdminProductoController extends Controller
 {
@@ -15,39 +15,72 @@ class AdminProductoController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
+        $validatedData = $request->validate([
             'nombre' => 'required|string|max:255',
             'descripcion' => 'required|string',
             'precio' => 'required|numeric',
             'cantidad' => 'required|integer',
             'categoria' => 'required|string',
             'estado' => 'required|boolean',
-            'foto' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'oferta' => 'nullable|numeric',
+            'foto' => 'nullable|image',
         ]);
 
         $producto = new Producto();
-        $producto->nombre = $request->nombre;
-        $producto->descripcion = $request->descripcion;
-        $producto->precio = $request->precio;
-        $producto->cantidad = $request->cantidad;
-        $producto->categoria = $request->categoria;
-        $producto->estado = $request->estado;
+        $producto->nombre = $validatedData['nombre'];
+        $producto->descripcion = $validatedData['descripcion'];
+        $producto->precio = $validatedData['precio'];
+        $producto->cantidad = $validatedData['cantidad'];
+        $producto->categoria = $validatedData['categoria'];
+        $producto->estado = $validatedData['estado'];
+        $producto->oferta = $validatedData['oferta'] ?? 0; // Si no hay oferta, establecer como 0
 
         if ($request->hasFile('foto')) {
-            $file = $request->file('foto');
-            $path = $file->store('public/fotos');
+            $path = $request->file('foto')->store('public/fotos');
             $producto->foto = $path;
         }
 
         $producto->save();
 
-        return response()->json(['message' => 'Producto agregado correctamente'], 201);
+        return response()->json(['message' => 'Producto creado correctamente', 'producto' => $producto]);
+    }
+
+    public function update(Request $request, $id)
+    {
+        $validatedData = $request->validate([
+            'nombre' => 'required|string|max:255',
+            'descripcion' => 'required|string',
+            'precio' => 'required|numeric',
+            'cantidad' => 'required|integer',
+            'categoria' => 'required|string',
+            'estado' => 'required|boolean',
+            'oferta' => 'nullable|numeric',
+            'foto' => 'nullable|image',
+        ]);
+
+        $producto = Producto::findOrFail($id);
+        $producto->nombre = $validatedData['nombre'];
+        $producto->descripcion = $validatedData['descripcion'];
+        $producto->precio = $validatedData['precio'];
+        $producto->cantidad = $validatedData['cantidad'];
+        $producto->categoria = $validatedData['categoria'];
+        $producto->estado = $validatedData['estado'];
+        $producto->oferta = $validatedData['oferta'] ?? 0;
+
+        if ($request->hasFile('foto')) {
+            $path = $request->file('foto')->store('public/fotos');
+            $producto->foto = $path;
+        }
+
+        $producto->save();
+
+        return response()->json(['message' => 'Producto actualizado correctamente', 'producto' => $producto]);
     }
 
     public function destroy($id)
     {
         $producto = Producto::findOrFail($id);
-        $producto->estado = false;
+        $producto->estado = false; // Desactivar el producto en lugar de eliminarlo
         $producto->save();
 
         return response()->json(['message' => 'Producto desactivado correctamente']);

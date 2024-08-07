@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\OfertaController;
+use App\Http\Controllers\AdminProductoController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -38,10 +39,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/admin/pedidos/{id}', [AdminController::class, 'updatePedido']);
 
     // Productos
-    Route::get('/admin/productos', [AdminController::class, 'getProductos']);
-    Route::post('/admin/productos', [AdminController::class, 'storeProducto']);
-    Route::put('/admin/productos/{id}', [AdminController::class, 'updateProducto']);
-    Route::delete('/admin/productos/{id}', [AdminController::class, 'destroyProducto']);
+    Route::get('/admin/productos', [AdminProductoController::class, 'index']);
+    Route::post('/admin/productos', [AdminProductoController::class, 'store']);
+    Route::put('/admin/productos/{id}', [AdminProductoController::class, 'update']);
+    Route::delete('/admin/productos/{id}', [AdminProductoController::class, 'destroy']);
 
     // Usuarios
     Route::get('/admin/usuarios', [AdminController::class, 'getUsuarios']);
