@@ -26,17 +26,3 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', [HomeController::class, 'index'])->name('home');
-
-// Rutas protegidas para el administrador
-Route::middleware(['auth', 'rol:admin'])->group(function () {
-    Route::resource('admin/pedidos', AdminPedidoController::class);
-    Route::resource('admin/productos', AdminProductoController::class);
-    Route::resource('admin/usuarios', AdminUsuarioController::class);
-    Route::get('admin/estadisticas', [AdminEstadisticasController::class, 'index'])->name('admin.estadisticas.index');
-});
-
-Route::middleware(['auth:sanctum', 'rol:admin'])->group(function () {
-    Route::get('/productos', [AdminProductoController::class, 'index']);
-    Route::post('/productos', [AdminProductoController::class, 'store']);
-    Route::delete('/productos/{id}', [AdminProductoController::class, 'destroy']);
-});

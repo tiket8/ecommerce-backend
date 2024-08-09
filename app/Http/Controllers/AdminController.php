@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Pedido;
-use App\Models\Producto;
 use App\Models\Usuario;
 use Illuminate\Http\Request;
 
@@ -29,78 +28,6 @@ class AdminController extends Controller
         $pedido->save();
 
         return response()->json(['success' => 'Pedido actualizado correctamente.']);
-    }
-
-    // Productos
-    public function getProductos()
-    {
-        $productos = Producto::all();
-        return response()->json($productos);
-    }
-
-    public function storeProducto(Request $request)
-    {
-        $request->validate([
-            'nombre' => 'required',
-            'descripcion' => 'required',
-            'precio' => 'required|numeric',
-            'cantidad' => 'required|integer',
-            'categoria' => 'required',
-            'foto' => 'required|image',
-        ]);
-
-        $producto = new Producto();
-        $producto->nombre = $request->nombre;
-        $producto->descripcion = $request->descripcion;
-        $producto->precio = $request->precio;
-        $producto->cantidad = $request->cantidad;
-        $producto->categoria = $request->categoria;
-        $producto->oferta = $request->oferta;
-        $producto->estado = true;
-
-        if ($request->hasFile('foto')) {
-            $producto->foto = $request->file('foto')->store('public/fotos');
-        }
-
-        $producto->save();
-
-        return response()->json(['success' => 'Producto creado correctamente.']);
-    }
-
-    public function updateProducto(Request $request, $id)
-    {
-        $request->validate([
-            'nombre' => 'required',
-            'descripcion' => 'required',
-            'precio' => 'required|numeric',
-            'cantidad' => 'required|integer',
-            'categoria' => 'required',
-        ]);
-
-        $producto = Producto::findOrFail($id);
-        $producto->nombre = $request->nombre;
-        $producto->descripcion = $request->descripcion;
-        $producto->precio = $request->precio;
-        $producto->cantidad = $request->cantidad;
-        $producto->categoria = $request->categoria;
-        $producto->oferta = $request->oferta;
-
-        if ($request->hasFile('foto')) {
-            $producto->foto = $request->file('foto')->store('public/fotos');
-        }
-
-        $producto->save();
-
-        return response()->json(['success' => 'Producto actualizado correctamente.']);
-    }
-
-    public function destroyProducto($id)
-    {
-        $producto = Producto::findOrFail($id);
-        $producto->estado = false;
-        $producto->save();
-
-        return response()->json(['success' => 'Producto desactivado correctamente.']);
     }
 
     // Usuarios
