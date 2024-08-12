@@ -20,3 +20,4 @@ class Producto extends Model
         'estado'
     ];
 }
+

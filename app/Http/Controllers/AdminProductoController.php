@@ -34,7 +34,8 @@ class AdminProductoController extends Controller
         $producto->estado = true;
 
         if ($request->hasFile('foto')) {
-            $producto->foto = $request->file('foto')->store('public/fotos');
+            $path = $request->file('foto')->store('public/fotos');
+            $producto->foto = basename($path);
         }
 
         $producto->save();
@@ -44,7 +45,7 @@ class AdminProductoController extends Controller
 
     public function update(Request $request, $id)
     {
-        $request->validate([
+        $request->validate([ //valida solicituddd 
             'nombre' => 'required',
             'descripcion' => 'required',
             'precio' => 'required|numeric',
@@ -52,7 +53,9 @@ class AdminProductoController extends Controller
             'categoria' => 'required',
         ]);
 
-        $producto = Producto::findOrFail($id);
+        $producto = Producto::findOrFail($id);//busca prodcto
+
+        //actualiza campos
         $producto->nombre = $request->nombre;
         $producto->descripcion = $request->descripcion;
         $producto->precio = $request->precio;
@@ -65,7 +68,7 @@ class AdminProductoController extends Controller
         }
 
         $producto->save();
-
+        //retorna respuesta JSON
         return response()->json(['success' => 'Producto actualizado correctamente.']);
     }
 
