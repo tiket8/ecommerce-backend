@@ -17,7 +17,8 @@ class Producto extends Model
         'categoria',
         'oferta',
         'foto',
-        'estado'
+        'estado',
+        'codigo',
     ];
 }
 

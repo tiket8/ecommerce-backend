@@ -22,6 +22,7 @@ class AdminProductoController extends Controller
             'cantidad' => 'required|integer',
             'categoria' => 'required',
             'foto' => 'required|image',
+            'codigo' => 'nullable|string',
         ]);
 
         $producto = new Producto();
@@ -32,6 +33,7 @@ class AdminProductoController extends Controller
         $producto->categoria = $request->categoria;
         $producto->oferta = $request->oferta;
         $producto->estado = true;
+        $producto->codigo = $request->codigo;
 
         if ($request->hasFile('foto')) {
             $producto->foto = $request->file('foto')->store('fotos');
@@ -51,6 +53,7 @@ class AdminProductoController extends Controller
             'precio' => 'required|numeric',
             'cantidad' => 'required|integer',
             'categoria' => 'required',
+            'codigo' => 'nullable|string',
         ]);
 
         $producto = Producto::findOrFail($id);//busca prodcto
@@ -62,7 +65,8 @@ class AdminProductoController extends Controller
         $producto->cantidad = $request->cantidad;
         $producto->categoria = $request->categoria;
         $producto->oferta = $request->oferta;
-
+        $producto->codigo = $request->codigo;
+        
         if ($request->hasFile('foto')) {
             $producto->foto = $request->file('foto')->store('public/fotos');
         }
