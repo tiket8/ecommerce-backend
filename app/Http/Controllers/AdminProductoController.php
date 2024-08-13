@@ -34,9 +34,9 @@ class AdminProductoController extends Controller
         $producto->estado = true;
 
         if ($request->hasFile('foto')) {
-            $path = $request->file('foto')->store('public/fotos');
-            $producto->foto = basename($path);
+            $producto->foto = $request->file('foto')->store('fotos');
         }
+        
 
         $producto->save();
 
