@@ -24,10 +24,18 @@ Route::get('ofertas', [OfertaController::class, 'index']);
 
 // Rutas protegidas por autenticación para admin
 Route::middleware('auth:sanctum')->group(function () {
-    // Pedidos
-    Route::get('/admin/pedidos', [AdminPedidoController::class, 'index']);
-    Route::get('/admin/pedidos/{id}', [AdminPedidoController::class, 'show']);
-    Route::put('/admin/pedidos/{id}', [AdminPedidoController::class, 'update']);
+    
+    //carrito
+    Route::get('/carrito/{categoria}', [CarritoController::class, 'index']);
+    Route::post('/carrito', [CarritoController::class, 'store']);
+    Route::delete('/carrito/{id}', [CarritoController::class, 'destroy']);
+
+    //pedidos
+    Route::get('/pedidos', [PedidoController::class, 'index']);
+    Route::post('/pedidos', [PedidoController::class, 'store']);
+    Route::get('/perfil', [UsuarioController::class, 'show']);
+    Route::put('/perfil', [UsuarioController::class, 'update']);
+    
 
     // Productos
     Route::get('/admin/productos', [AdminProductoController::class, 'index']);

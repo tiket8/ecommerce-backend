@@ -13,6 +13,7 @@ class Oferta extends Model
         'nombre',
         'descripcion',
         'precio',
-        'foto'
+        'foto',
+        'codigo'
     ];
 }
