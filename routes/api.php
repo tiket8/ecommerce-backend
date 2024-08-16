@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\OfertaController;
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AdminProductoController;
 use App\Http\Controllers\AdminPedidoController;
 use App\Http\Controllers\AdminUsuarioController;
@@ -44,9 +45,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/admin/productos/{id}', [AdminProductoController::class, 'destroy']);
 
     // Usuarios
-    Route::get('/admin/usuarios', [AdminUsuarioController::class, 'index']);
-    Route::delete('/admin/usuarios/{id}', [AdminUsuarioController::class, 'destroy']);
-
+    Route::get('/admin/usuarios', [AdminController::class, 'getUsuarios']);
+    Route::get('/admin/usuarios/{id}', [AdminController::class, 'show']);
+    Route::put('/admin/usuarios/desactivar/{id}', [AdminController::class, 'desactivar']);
+    Route::put('/admin/usuarios/activar/{id}', [AdminController::class, 'activar']);
     // Estadísticas
     Route::get('/admin/estadisticas', [AdminEstadisticasController::class, 'index']);
 });

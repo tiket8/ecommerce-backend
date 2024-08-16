@@ -32,19 +32,29 @@ class AdminController extends Controller
 
     // Usuarios
     public function getUsuarios()
-    {
-        $usuarios = Usuario::all();
-        return response()->json($usuarios);
-    }
+{
+    $usuarios = Usuario::where('rol', 'cliente')->get();
+    return response()->json($usuarios);
+}
 
-    public function destroyUsuario($id)
-    {
-        $usuario = Usuario::findOrFail($id);
-        $usuario->delete();
-
-        return response()->json(['success' => 'Usuario eliminado correctamente.']);
-    }
-
+     // Desactivar usuario
+     public function desactivar($id)
+     {
+         $usuario = Usuario::findOrFail($id);
+         $usuario->estado = false; // Asegúrate de que el campo 'activo' exista en tu tabla usuarios
+         $usuario->save();
+     
+         return response()->json(['success' => 'Usuario desactivado correctamente.']);
+     }
+     
+     public function activar($id)
+     {
+         $usuario = Usuario::findOrFail($id);
+         $usuario->estado = true; // Cambiar el estado a activo
+         $usuario->save();
+     
+         return response()->json(['success' => 'Usuario activado correctamente.']);
+     }
     // Estadísticas
     public function getEstadisticas()
     {
