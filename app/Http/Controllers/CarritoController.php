@@ -12,9 +12,9 @@ class CarritoController extends Controller
     public function index($categoria)
     {
         $user = Auth::user();
-        $carrito = Carrito::where('user_id', $user->id)
+        $carrito = Carrito::where('usuarios_id', $user->id)
                           ->where('categoria', $categoria)
-                          ->with('productos')
+                          ->with('producto')
                           ->get();
 
         return response()->json($carrito);
@@ -31,7 +31,7 @@ class CarritoController extends Controller
         $producto = Producto::find($request->producto_id);
 
         // Verificar si el producto ya está en el carrito
-        $carritoItem = Carrito::where('user_id', $user->id)
+        $carritoItem = Carrito::where('usuarios_id', $user->id)
                               ->where('producto_id', $request->producto_id)
                               ->first();
 
@@ -40,7 +40,7 @@ class CarritoController extends Controller
             $carritoItem->save();
         } else {
             $carritoItem = new Carrito();
-            $carritoItem->user_id = $user->id;
+            $carritoItem->usuarios_id = $user->id;  // Cambiado aquí a usuarios_id
             $carritoItem->producto_id = $request->producto_id;
             $carritoItem->cantidad = $request->cantidad;
             $carritoItem->categoria = $producto->categoria;

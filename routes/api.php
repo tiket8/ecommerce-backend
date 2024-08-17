@@ -6,6 +6,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\OfertaController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AdminProductoController;
+use App\Http\Controllers\CarritoController;
 use App\Http\Controllers\AdminPedidoController;
 use App\Http\Controllers\AdminUsuarioController;
 use App\Http\Controllers\AdminEstadisticasController;
@@ -28,31 +29,35 @@ Route::get('/productos/electronica', [\App\Http\Controllers\ProductoController::
 Route::get('/productos/beterwere', [\App\Http\Controllers\ProductoController::class, 'getProductosBeterwere']);
 
 
-// Rutas protegidas por autenticación para admin
+// Rutas protegidas para usuarios autenticados (clientes)
 Route::middleware('auth:sanctum')->group(function () {
-    
-    //carrito
+
+    // Rutas del carrito (disponibles para clientes)
     Route::post('/carrito', [CarritoController::class, 'store']);
     Route::get('/carrito/{categoria}', [CarritoController::class, 'index']);
     Route::delete('/carrito/{id}', [CarritoController::class, 'destroy']);
-    //pedidos
-    Route::get('/pedidos', [PedidoController::class, 'index']);
-    Route::post('/pedidos', [PedidoController::class, 'store']);
-    Route::get('/perfil', [UsuarioController::class, 'show']);
-    Route::put('/perfil', [UsuarioController::class, 'update']);
     
+    // Rutas de pedidos
+    Route::post('/pedidos', [\App\Http\Controllers\PedidoController::class, 'store']);
+    Route::get('/pedidos', [\App\Http\Controllers\PedidoController::class, 'index']);
+    Route::get('/perfil', [\App\Http\Controllers\UsuarioController::class, 'show']);
+    Route::put('/perfil', [\App\Http\Controllers\UsuarioController::class, 'update']);
+});
 
-    // Productos
+// Rutas del administrador
+Route::middleware('auth:sanctum')->group(function () {
+
+    // Rutas de productos para administrador
     Route::get('/admin/productos', [AdminProductoController::class, 'index']);
     Route::post('/admin/productos', [AdminProductoController::class, 'store']);
     Route::put('/admin/productos/{id}', [AdminProductoController::class, 'update']);
     Route::delete('/admin/productos/{id}', [AdminProductoController::class, 'destroy']);
 
-    // Usuarios
+    // Rutas de usuarios para administrador
     Route::get('/admin/usuarios', [AdminController::class, 'getUsuarios']);
-    Route::get('/admin/usuarios/{id}', [AdminController::class, 'show']);
     Route::put('/admin/usuarios/desactivar/{id}', [AdminController::class, 'desactivar']);
     Route::put('/admin/usuarios/activar/{id}', [AdminController::class, 'activar']);
+
     // Estadísticas
     Route::get('/admin/estadisticas', [AdminEstadisticasController::class, 'index']);
 });
