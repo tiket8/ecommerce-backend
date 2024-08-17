@@ -22,15 +22,19 @@ Route::middleware('auth:sanctum')->post('logout', [AuthController::class, 'logou
 
 // Ruta para obtener las ofertas (no requiere autenticación)
 Route::get('ofertas', [OfertaController::class, 'index']);
+// Ruta para obtener productos de Electrónica
+Route::get('/productos/electronica', [\App\Http\Controllers\ProductoController::class, 'getProductosElectronica']);
+// Ruta para obtener productos de Beterwere
+Route::get('/productos/beterwere', [\App\Http\Controllers\ProductoController::class, 'getProductosBeterwere']);
+
 
 // Rutas protegidas por autenticación para admin
 Route::middleware('auth:sanctum')->group(function () {
     
     //carrito
-    Route::get('/carrito/{categoria}', [CarritoController::class, 'index']);
     Route::post('/carrito', [CarritoController::class, 'store']);
+    Route::get('/carrito/{categoria}', [CarritoController::class, 'index']);
     Route::delete('/carrito/{id}', [CarritoController::class, 'destroy']);
-
     //pedidos
     Route::get('/pedidos', [PedidoController::class, 'index']);
     Route::post('/pedidos', [PedidoController::class, 'store']);
