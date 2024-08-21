@@ -22,13 +22,19 @@ class AdminController extends Controller
     }
 
     public function updatePedido(Request $request, $id)
-    {
-        $pedido = Pedido::findOrFail($id);
-        $pedido->estado = $request->estado;
-        $pedido->save();
+{
+    $pedido = Pedido::findOrFail($id);
+    $pedido->estado = $request->estado;
 
-        return response()->json(['success' => 'Pedido actualizado correctamente.']);
+    // Si se asigna una fecha de recogida
+    if ($request->has('fecha_recogida') && $pedido->estado === 'fecha asignada') {
+        $pedido->fecha_recogida = $request->fecha_recogida;
     }
+
+    $pedido->save();
+
+    return response()->json(['success' => 'Estado del pedido actualizado correctamente.']);
+}
 
     // Usuarios
     public function getUsuarios()

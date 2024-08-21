@@ -44,9 +44,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/perfil', [\App\Http\Controllers\UsuarioController::class, 'update']);
 });
 
-// Rutas del administrador
-Route::middleware('auth:sanctum')->group(function () {
-
+// Rutas del administrador protegidas por middleware 'admin'
+Route::middleware(['auth:sanctum', 'admin'])->group(function () {
     // Rutas de productos para administrador
     Route::get('/admin/productos', [AdminProductoController::class, 'index']);
     Route::post('/admin/productos', [AdminProductoController::class, 'store']);
@@ -60,4 +59,10 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Estadísticas
     Route::get('/admin/estadisticas', [AdminEstadisticasController::class, 'index']);
+
+    // Gestión de pedidos del administrador
+    Route::get('/admin/pedidos', [AdminPedidoController::class, 'index']);
+    Route::get('/admin/pedidos/{id}', [AdminPedidoController::class, 'show']);
+    Route::put('/admin/pedidos/{id}/estado', [AdminPedidoController::class, 'updateEstado']);
+    Route::delete('/admin/pedidos/{id}', [AdminPedidoController::class, 'destroy']);
 });

@@ -9,6 +9,7 @@ class Producto extends Model
 {
     use HasFactory;
 
+    // Campos que pueden ser llenados en la base de datos
     protected $fillable = [
         'nombre',
         'descripcion',
@@ -20,5 +21,11 @@ class Producto extends Model
         'estado',
         'codigo',
     ];
-}
 
+    // Relación muchos a muchos con el modelo Pedido a través de la tabla pivote 'pedido_producto'
+    public function pedidos()
+    {
+        return $this->belongsToMany(Pedido::class, 'pedido_producto')
+                    ->withPivot('cantidad');
+    }
+}

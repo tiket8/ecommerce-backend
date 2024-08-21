@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateCarritoTable extends Migration
+class RemoveProductoIdFromPedidos extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,8 @@ class CreateCarritoTable extends Migration
      */
     public function up()
     {
-        Schema::create('_carrito_', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
+        Schema::table('pedidos', function (Blueprint $table) {
+            $table->dropColumn('producto_id');  // Eliminar la columna producto_id
         });
     }
 
@@ -26,6 +25,9 @@ class CreateCarritoTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('_carrito_');
+        Schema::table('pedidos', function (Blueprint $table) {
+            $table->foreignId('producto_id')->constrained('productos')->onDelete('cascade');
+        });
     }
 }
+
