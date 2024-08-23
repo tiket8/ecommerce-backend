@@ -23,22 +23,30 @@ Route::middleware('auth:sanctum')->post('logout', [AuthController::class, 'logou
 
 // Ruta para obtener las ofertas (no requiere autenticación)
 Route::get('ofertas', [OfertaController::class, 'index']);
+
 // Ruta para obtener productos de Electrónica
 Route::get('/productos/electronica', [\App\Http\Controllers\ProductoController::class, 'getProductosElectronica']);
+
 // Ruta para obtener productos de Beterwere
 Route::get('/productos/beterwere', [\App\Http\Controllers\ProductoController::class, 'getProductosBeterwere']);
-
 
 // Rutas protegidas para usuarios autenticados (clientes)
 Route::middleware('auth:sanctum')->group(function () {
 
-    // Rutas del carrito (disponibles para clientes)
-    Route::post('/carrito', [CarritoController::class, 'store']);
-    Route::get('/carrito/{categoria}', [CarritoController::class, 'index']);
-    Route::delete('/carrito/{id}', [CarritoController::class, 'destroy']);
+    // Rutas del carrito de Electrónica
+    Route::get('/carrito/electronica', [CarritoController::class, 'obtenerCarritoElectronica']);
+    Route::post('/carrito/electronica', [CarritoController::class, 'agregarProductoCarritoElectronica']);
+    Route::delete('/carrito/{id}', [CarritoController::class, 'destroy']);  // Eliminar productos de cualquier carrito
+
+    // Rutas del carrito de Beterwere
+    Route::get('/carrito/beterwere', [CarritoController::class, 'obtenerCarritoBeterwere']);
+    Route::post('/carrito/beterwere', [CarritoController::class, 'agregarProductoCarritoBeterwere']);
     
-    // Rutas de pedidos
-    Route::post('/pedidos', [\App\Http\Controllers\PedidoController::class, 'store']);
+    // Rutas de pedidos separados por categoría
+    Route::post('/pedidos/electronica', [CarritoController::class, 'realizarPedidoElectronica']);
+    Route::post('/pedidos/beterwere', [CarritoController::class, 'realizarPedidoBeterwere']);
+
+    // Otras rutas del cliente
     Route::get('/pedidos', [\App\Http\Controllers\PedidoController::class, 'index']);
     Route::get('/perfil', [\App\Http\Controllers\UsuarioController::class, 'show']);
     Route::put('/perfil', [\App\Http\Controllers\UsuarioController::class, 'update']);

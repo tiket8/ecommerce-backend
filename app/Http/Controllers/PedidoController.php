@@ -11,59 +11,64 @@ use Illuminate\Support\Facades\Auth;
 
 class PedidoController extends Controller
 {
-    // Método para almacenar un nuevo pedido
+    // Método para almacenar un nuevo pedido basado en la categoría
     public function store(Request $request)
-{
-    // Obtener el usuario autenticado
-    $user = Auth::user();
+    {
+        // Obtener el usuario autenticado
+        $user = Auth::user();
+        $categoria = $request->input('categoria');  // Obtener la categoría enviada desde el frontend
 
-    // Verificar si el carrito del usuario está vacío
-    $carritoItems = Carrito::where('usuarios_id', $user->id)->get();
-    if ($carritoItems->isEmpty()) {
-        return response()->json(['error' => 'El carrito está vacío'], 400);
-    }
+        // Verificar si el carrito del usuario para la categoría está vacío
+        $carritoItems = Carrito::where('usuarios_id', $user->id)
+                               ->where('categoria', $categoria)  // Filtra por la categoría
+                               ->get();
 
-    // Validar el campo 'tipo_pago'
-    $request->validate([
-        'tipo_pago' => 'required|string',
-    ]);
+        if ($carritoItems->isEmpty()) {
+            return response()->json(['error' => 'El carrito está vacío para esta categoría'], 400);
+        }
 
-    try {
-        // Crear un nuevo pedido
-        $pedido = Pedido::create([
-            'usuario_id' => $user->id,
-            'estado' => 'en proceso',
-            'tipo_pago' => $request->tipo_pago,
+        // Validar el campo 'tipo_pago'
+        $request->validate([
+            'tipo_pago' => 'required|string',
         ]);
 
-        // Asociar los productos del carrito con el pedido
-        foreach ($carritoItems as $item) {
-            $pedido->productos()->attach($item->producto_id, ['cantidad' => $item->cantidad]);
+        try {
+            // Crear un nuevo pedido
+            $pedido = Pedido::create([
+                'usuario_id' => $user->id,
+                'estado' => 'en proceso',
+                'tipo_pago' => $request->tipo_pago,
+            ]);
+
+            // Asociar los productos del carrito de la categoría con el pedido
+            foreach ($carritoItems as $item) {
+                $pedido->productos()->attach($item->producto_id, ['cantidad' => $item->cantidad]);
+            }
+
+            // Vaciar solo los productos de la categoría seleccionada en el carrito después de crear el pedido
+            Carrito::where('usuarios_id', $user->id)
+                    ->where('categoria', $categoria)
+                    ->delete();
+
+            // Cargar las relaciones necesarias antes de enviar el correo
+            $pedido = Pedido::with('productos', 'usuario')->find($pedido->id);
+
+            if (!$pedido || !$pedido->usuario || $pedido->productos->isEmpty()) {
+                \Log::error('Error: Pedido, usuario o productos no encontrados.');
+                return response()->json(['error' => 'Error al procesar el pedido.'], 500);
+            }
+
+            // Enviar correo electrónico confirmando el pedido
+            Mail::to($user->email)->send(new PedidoCreado($pedido));
+
+            return response()->json(['mensaje' => 'Pedido creado y correo enviado.'], 201);
+
+        } catch (\Exception $e) {
+            // Registrar el error en los logs
+            \Log::error('Error al crear el pedido: ' . $e->getMessage());
+            return response()->json(['error' => 'Ocurrió un error al crear el pedido'], 500);
         }
-
-        // Vaciar el carrito después de crear el pedido
-        Carrito::where('usuarios_id', $user->id)->delete();
-
-        // Cargar las relaciones necesarias antes de enviar el correo
-        $pedido = Pedido::with('productos', 'usuario')->find($pedido->id);
-        
-        if (!$pedido || !$pedido->usuario || $pedido->productos->isEmpty()) {
-            // Manejar el caso donde no se encuentren los datos necesarios
-            \Log::error('Error: Pedido, usuario o productos no encontrados.');
-            return response()->json(['error' => 'Error al procesar el pedido.'], 500);
-        }
-
-        // Enviar correo electrónico confirmando el pedido
-        Mail::to($user->email)->send(new PedidoCreado($pedido));
-
-        return response()->json(['mensaje' => 'Pedido creado y correo enviado.'], 201);
-
-    } catch (\Exception $e) {
-        // Registrar el error en los logs
-        \Log::error('Error al crear el pedido: ' . $e->getMessage());
-        return response()->json(['error' => 'Ocurrió un error al crear el pedido'], 500);
     }
-}
 
     // Método para actualizar el estado de un pedido
     public function updateEstado(Request $request, $id)
