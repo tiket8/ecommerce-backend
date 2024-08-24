@@ -9,12 +9,11 @@ class OfertaController extends Controller
 {
     public function index()
     {
-        try {
-            $ofertas = Producto::where('oferta', true)->get();
-            return response()->json($ofertas);
-        } catch (\Exception $e) {
-            \Log::error('Error al obtener las ofertas: ' . $e->getMessage());
-            return response()->json(['error' => 'Error al obtener las ofertas'], 500);
-        }
+        // Filtrar productos que estén en oferta y activos (estado = true)
+        $ofertas = Producto::where('oferta', true)
+                            ->where('estado', true) // Solo productos activos
+                            ->get();
+
+        return response()->json($ofertas);
     }
 }

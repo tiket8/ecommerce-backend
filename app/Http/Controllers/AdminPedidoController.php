@@ -42,44 +42,30 @@ class AdminPedidoController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function updateEstado(Request $request, $id)
-    {
-        // Validar los datos recibidos
-        $request->validate([
-            'estado' => 'required|string',
-            'fecha_entrega' => 'nullable|date'
-        ]);
+{
+    // Validar los datos recibidos
+    $request->validate([
+        'estado' => 'required|string',
+        'fecha_entrega' => 'nullable|date'
+    ]);
 
-        // Encontrar el pedido por su ID
-        $pedido = Pedido::findOrFail($id);
+    // Buscar el pedido por su ID
+    $pedido = Pedido::with('usuario')->findOrFail($id);
 
-        // Actualizar el estado del pedido
-        $pedido->estado = $request->estado;
+    // Actualizar el estado del pedido
+    $pedido->estado = $request->estado;
 
-        // Si el estado es "fecha asignada", asignar la fecha de entrega
-        if ($request->estado === 'fecha asignada' && $request->has('fecha_entrega')) {
-            $pedido->fecha_entrega = $request->fecha_entrega;
-        }
+    // Si el estado es "fecha asignada", asignar la fecha de entrega y enviar el correo
+    if ($request->estado === 'fecha asignada' && $request->has('fecha_entrega')) {
+        $pedido->fecha_entrega = $request->fecha_entrega;
 
-        // Guardar los cambios
-        $pedido->save();
-
-        return response()->json(['success' => 'Estado del pedido actualizado correctamente.']);
+        // Enviar correo al usuario con la fecha asignada
+        Mail::to($pedido->usuario->email)->send(new FechaAsignada($pedido, $request->fecha_entrega));
     }
 
-    /**
-     * Eliminar un pedido por su ID.
-     * 
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function destroy($id)
-    {
-        // Buscar el pedido por su ID
-        $pedido = Pedido::findOrFail($id);
+    // Guardar los cambios
+    $pedido->save();
 
-        // Eliminar el pedido
-        $pedido->delete();
-
-        return response()->json(['success' => 'Pedido eliminado correctamente.']);
-    }
+    return response()->json(['success' => 'Estado del pedido actualizado correctamente.']);
+}
 }

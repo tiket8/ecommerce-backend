@@ -22,3 +22,18 @@ class AdminSeeder extends Seeder
         ]);
     }
 }
+
+// Crear el usuario vendedor
+Usuario::create([
+    'nombre' => 'Vendedor',
+    'direccion' => 'Dirección Vendedor',
+    'telefono' => '111111111',
+    
+   
+'celular' => '111111111',
+    'email' => 'vendedor@gpetronic.com',
+    'password' => Hash::make('vendedor123'),
+    'rol' => 'vendedor', // Rol de vendedor
+    'estado' => true,
+]);
+

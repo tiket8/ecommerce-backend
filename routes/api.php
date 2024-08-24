@@ -10,6 +10,8 @@ use App\Http\Controllers\CarritoController;
 use App\Http\Controllers\AdminPedidoController;
 use App\Http\Controllers\AdminUsuarioController;
 use App\Http\Controllers\AdminEstadisticasController;
+use App\Http\Controllers\EstadisticasController;
+use App\Http\Controllers\PedidoController;
 
 // Ruta para obtener el usuario autenticado
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
@@ -32,6 +34,8 @@ Route::get('/productos/beterwere', [\App\Http\Controllers\ProductoController::cl
 
 // Rutas protegidas para usuarios autenticados (clientes)
 Route::middleware('auth:sanctum')->group(function () {
+    
+    Route::middleware('auth:sanctum')->get('/pedidos-usuario', [PedidoController::class, 'obtenerPedidosUsuario']);
 
     // Rutas del carrito de Electrónica
     Route::get('/carrito/electronica', [CarritoController::class, 'obtenerCarritoElectronica']);
@@ -45,9 +49,9 @@ Route::middleware('auth:sanctum')->group(function () {
     // Rutas de pedidos separados por categoría
     Route::post('/pedidos/electronica', [CarritoController::class, 'realizarPedidoElectronica']);
     Route::post('/pedidos/beterwere', [CarritoController::class, 'realizarPedidoBeterwere']);
+    
 
     // Otras rutas del cliente
-    Route::get('/pedidos', [\App\Http\Controllers\PedidoController::class, 'index']);
     Route::get('/perfil', [\App\Http\Controllers\UsuarioController::class, 'show']);
     Route::put('/perfil', [\App\Http\Controllers\UsuarioController::class, 'update']);
 });
@@ -59,6 +63,7 @@ Route::middleware(['auth:sanctum', 'admin'])->group(function () {
     Route::post('/admin/productos', [AdminProductoController::class, 'store']);
     Route::put('/admin/productos/{id}', [AdminProductoController::class, 'update']);
     Route::delete('/admin/productos/{id}', [AdminProductoController::class, 'destroy']);
+    Route::put('/admin/productos/activar/{id}', [AdminProductoController::class, 'activar']);
 
     // Rutas de usuarios para administrador
     Route::get('/admin/usuarios', [AdminController::class, 'getUsuarios']);
@@ -66,11 +71,14 @@ Route::middleware(['auth:sanctum', 'admin'])->group(function () {
     Route::put('/admin/usuarios/activar/{id}', [AdminController::class, 'activar']);
 
     // Estadísticas
-    Route::get('/admin/estadisticas', [AdminEstadisticasController::class, 'index']);
+    Route::get('/admin/estadisticas/ventas-por-categoria', [EstadisticasController::class, 'obtenerVentasPorCategoria']);
+
+
 
     // Gestión de pedidos del administrador
     Route::get('/admin/pedidos', [AdminPedidoController::class, 'index']);
     Route::get('/admin/pedidos/{id}', [AdminPedidoController::class, 'show']);
     Route::put('/admin/pedidos/{id}/estado', [AdminPedidoController::class, 'updateEstado']);
     Route::delete('/admin/pedidos/{id}', [AdminPedidoController::class, 'destroy']);
+    
 });
